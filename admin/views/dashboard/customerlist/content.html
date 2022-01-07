@@ -1,0 +1,30 @@
+{{ define "content" }}
+<h1>
+    Customers
+    <a href="/customer/createuser" class="btn btn-outline-primary float-right" ><i class="fa fa-plus"></i>Add New</a>
+</h1>
+<hr>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">City</th>
+        <th scope="col">Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $index,$value := .Customers }}
+      <tr>
+        <th scope="row">{{ $value.ID }}</th>
+          <td>{{ $value.Username }}</td>
+          <td>{{ $value.City }}</td>
+          <td>
+            <a href="/admin/edit/customer/{{ $value.ID }}" class="btn btn-outline-warning"><i class="fa fa-pen"></i></a>
+            <a href="/admin/delete/customer/{{ $value.ID }}" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a>
+          </td>
+      </tr>
+    {{ end }}
+    </tbody>
+  </table>
+    {{ end }}

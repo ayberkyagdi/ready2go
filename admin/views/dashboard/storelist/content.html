@@ -1,0 +1,32 @@
+{{ define "content" }}
+<h1>
+    Stores
+    <a href="/store/createstore" class="btn btn-outline-primary float-right" ><i class="fa fa-plus"></i>Add New</a>
+</h1>
+<hr>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Store</th>
+        <th scope="col">City</th>
+        <th scope="col">District</th>
+        <th scope="col">Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $index,$value := .Stores }}
+      <tr>
+        <th scope="row">{{ $value.ID }}</th>
+          <td>{{ $value.Storename }}</td>
+          <td>{{ $value.City }}</td>
+          <td>{{ $value.District }}</td>
+          <td>
+            <a href="/admin/edit/store/{{ $value.ID }}" class="btn btn-outline-warning"><i class="fa fa-pen"></i></a>
+            <a href="/admin/delete/store/{{ $value.ID }}" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a>
+          </td>
+      </tr>
+    {{ end }}
+    </tbody>
+  </table>
+    {{ end }}

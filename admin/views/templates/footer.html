@@ -1,0 +1,15 @@
+{{ define "footer" }}
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Ready2GO <span id = "year"></span></span>
+        </div>
+    </div>
+</footer>
+<script>
+    var date = new Date()
+    document.getElementById("year").innerText = date.getFullYear();
+</script>
+<!-- End of Footer -->
+{{ end }}
