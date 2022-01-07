@@ -16,9 +16,9 @@ type Item struct {
 type Product struct {
 	gorm.Model
 	Name, Description  string
-	Price		       float64
+	Price		   float64
 	StoreID       	   int64
-	Quantity		   int64
+	Quantity	   int64
 }
 
 func (product Product) Migrate() {
