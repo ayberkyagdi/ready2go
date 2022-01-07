@@ -8,8 +8,8 @@ import (
 )
 
 type Item struct {
-	Product Product 
-	Order int64
+	Product    Product 
+	Order 	   int64
 	CustomerID int64
 	
 }
