@@ -131,11 +131,13 @@
                         <tbody>
                           {{ range $index,$value := .Products}}  
                           <tr>
-                            <td>{{ $value.Name }}</td>
-                            <td>{{ $value.Price }}</td>
-                            <td>{{ $value.Quantity }}</td>
-                            <td>{{ $value.Description }}</td>
-                            <td><a href="/customer/cart/{{$value.ID}}">Buy</a></td>
+                            {{ if $value.Quantity}}
+                                <td>{{ $value.Name }}</td>
+                                <td>{{ $value.Price }}₺</td>
+                                <td>{{ $value.Quantity }}</td>
+                                <td>{{ $value.Description }}</td>
+                                <td><a href="/customer/cart/{{$value.ID}}">Buy</a></td>
+                            {{ end }}
                           </tr>
                           {{ end }}
                         </thead>

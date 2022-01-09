@@ -44,7 +44,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="/store/newproduct/{{.ID}}">
+                <a class="nav-link" href="/store/newproduct/{{ .ID }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Add Product</span></a>
             </li>
@@ -121,14 +121,25 @@
                     <table class="table">
                         <thead class="thead-dark">
                           <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Store</th>
-                            <th scope="col">City</th>
-                            <th scope="col">District</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Stock</th>
                           </tr>
                         </thead>
                           <tr>
                         </tbody>
+                        {{ if .Products }}
+                          {{ range $index,$value := .Products}}  
+                          <tr>
+                            <td>{{ $value.Name }}</td>
+                            <td>{{ $value.Description }}</td>
+                            <td>{{ $value.Price }}</td>
+                            <td>{{ $value.Quantity }}</td>
+                            <td></td>
+                          </tr>
+                            {{ end }}
+                        {{ end }}
                       </table>
 
 

@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -21,76 +19,59 @@ type Product struct {
 	Quantity	   int64
 }
 
-func (product Product) Migrate() {
-
+func (product Product) Open() *gorm.DB {
+	Create_db()
 	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
 	
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
+	
+	return db
+}
+
+
+func (product Product) Migrate() {
+	db := product.Open()
+	
 	db.AutoMigrate(&product)
 }
 
 func (product Product) Add() {
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
+	db := product.Open()
 	
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	db.Create(&product)
 }
 	
 func (product Product) Get(where ...interface{}) Product {
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
-	
-	if err != nil {
-		panic(err.Error())
-	}
+	db := product.Open()
 
 	db.First(&product, where...)
 	return product
 }
 
 func (product Product) GetAll(where ...interface{}) []Product{
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
-	
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
+	db := product.Open()
+
 	var products []Product
 	db.Find(&products, where...)
 	return products
 }
 
 func (product Product) Update(column string, value interface{}) {
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
-	
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	db := product.Open()
+
 	db.Model(&product).Update(column,value)
 }
 
 func (product Product) Updates(data Product) {
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
-	
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	db := product.Open()
+
 	db.Model(&product).Updates(data)
 }
 
 func (product Product) Delete() {
-	db, err := gorm.Open(mysql.Open(Dsn), &gorm.Config{})
-	
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	db := product.Open()
+
 	db.Delete(&product, product.ID)
 }

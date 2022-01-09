@@ -144,12 +144,14 @@ func (userops Userops) Dashboard_store(w http.ResponseWriter, r *http.Request, p
 		password := fmt.Sprintf("%x", sha256.Sum256([]byte(r.FormValue("password"))))
 		user := models.Store{}.Get("storename = ? AND password = ?", username, password)
 		SetSessionLoggedID(w, r, int(user.ID))
-		data["ID"] = GetSessionLoggedID(r)
+		store_id := GetSessionLoggedID(r)
+		data["Products"] = models.Product{}.GetAll("store_id = ?",store_id)
+		data["ID"] = store_id
 		view.ExecuteTemplate(w, "dashboard", data)
 	} else if r.Method == "POST" && len(r.FormValue("name")) > 0 {
 		name := r.FormValue("name")
 		description := r.FormValue("description")
-		price,_ := strconv.Atoi(r.FormValue("price"))
+		price,_ := strconv.ParseFloat(r.FormValue("price"),64)
 		storeid := GetSessionLoggedID(r)
 		quantity,_ := strconv.Atoi(r.FormValue("quantity"))
 		models.Product{
@@ -159,10 +161,14 @@ func (userops Userops) Dashboard_store(w http.ResponseWriter, r *http.Request, p
 			StoreID:     int64(storeid),
 			Quantity:    int64(quantity),
 		}.Add()
-		data["ID"] = GetSessionLoggedID(r)
+		store_id := GetSessionLoggedID(r)
+		data["Products"] = models.Product{}.GetAll("store_id = ?",store_id)
+		data["ID"] = store_id
 		view.ExecuteTemplate(w, "dashboard", data)
 	} else {
-		data["ID"] = GetSessionLoggedID(r)
+		store_id := GetSessionLoggedID(r)
+		data["Products"] = models.Product{}.GetAll("store_id = ?",store_id)
+		data["ID"] = store_id
 		view.ExecuteTemplate(w, "dashboard", data)
 	}
 }
@@ -225,7 +231,10 @@ func (userops Userops) Customer_add_to_cart(w http.ResponseWriter, r *http.Reque
 				Order: 1,
 			} )
 		}else{
-			cart[index].Order++
+			product := models.Product{}.Get("id = ?", int_id)
+			if cart[index].Order+1 <= product.Quantity{
+				cart[index].Order++
+			}
 		}
 		bytesCart, _ := json.Marshal(cart)
 		session.Values["cart"] = string(bytesCart)
@@ -260,7 +269,7 @@ func (userops Userops) Customer_list_cart(w http.ResponseWriter, r *http.Request
 	data := map[string]interface{}{
 		"cart":cart,
 		"total":Totalprice,
-		"storeID":cart[0].Product.StoreID,
+		"storeID":cart[len(cart)-1].Product.StoreID,
 	}
 	
 	view.ExecuteTemplate(w,"cart",data)
@@ -329,7 +338,7 @@ func (userops Userops) Customer_done_cart(w http.ResponseWriter, r *http.Request
 		cost := strconv.Itoa(int(cart[i].Product.Price))+"₺"
 		totalcost += float64(cart[i].Order) * cart[i].Product.Price
 		customer = models.Customer{}.Get("id = ?", cart[0].CustomerID)
-		d2 := Dictionary{"Customer":customer.Username,"Customer_City":customer.City,"Product":cart[i].Product.Name,"Cost":cost,"Quantity":strconv.Itoa(int(cart[i].Order)),"Store":store.Storename,
+		d2 := Dictionary{"Customer":customer.Username,"Customer_City":customer.City,"Product":cart[i].Product.Name,"Price":cost,"Quantity":strconv.Itoa(int(cart[i].Order)),"Store":store.Storename,
 						"Store_City":store.City,"Store_District":store.District,"Order_time":order_time,"Total_Cost":totalcost}
 		product := models.Product{}.Get("name = ? AND store_id = ?", cart[i].Product.Name,cart[i].Product.StoreID)
 		product.Update("quantity", (cart[i].Product.Quantity - cart[i].Order))
@@ -342,7 +351,8 @@ func (userops Userops) Customer_done_cart(w http.ResponseWriter, r *http.Request
 	file_time = file_time[:len(file_time)-14]
 	file_time = strings.Replace(file_time, ":", "_", -1 )
 
-	filename := customer.Username+"-"+file_time+".json"
+	path := "orders/"
+	filename := path+customer.Username+"-"+file_time+".json"
 	
 	_ = ioutil.WriteFile(filename, file, 0644)
 	session.Values["cart"] = nil
