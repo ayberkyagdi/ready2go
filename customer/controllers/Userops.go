@@ -335,7 +335,7 @@ func (userops Userops) Customer_done_cart(w http.ResponseWriter, r *http.Request
 	order_time := time.Now().Format("Mon Jan _2 15:04:05 2006")
 	for i := range cart {
 		store := models.Store{}.Get("id = ?", cart[i].Product.StoreID)
-		cost := strconv.Itoa(int(cart[i].Product.Price))+"₺"
+		cost := fmt.Sprintf("%v ₺",cart[i].Product.Price)
 		totalcost += float64(cart[i].Order) * cart[i].Product.Price
 		customer = models.Customer{}.Get("id = ?", cart[0].CustomerID)
 		d2 := Dictionary{"Customer":customer.Username,"Customer_City":customer.City,"Product":cart[i].Product.Name,"Price":cost,"Quantity":strconv.Itoa(int(cart[i].Order)),"Store":store.Storename,
