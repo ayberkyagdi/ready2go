@@ -231,7 +231,6 @@ func (userops Userops) Customer_add_to_cart(w http.ResponseWriter, r *http.Reque
 				Order: 1,
 			} )
 		}else{
-			product := models.Product{}.Get("id = ?", int_id)
 			if cart[index].Order+1 <= product.Quantity{
 				cart[index].Order++
 			}
@@ -340,7 +339,7 @@ func (userops Userops) Customer_done_cart(w http.ResponseWriter, r *http.Request
 		customer = models.Customer{}.Get("id = ?", cart[0].CustomerID)
 		d2 := Dictionary{"Customer":customer.Username,"Customer_City":customer.City,"Product":cart[i].Product.Name,"Price":cost,"Quantity":strconv.Itoa(int(cart[i].Order)),"Store":store.Storename,
 						"Store_City":store.City,"Store_District":store.District,"Order_time":order_time,"Total_Cost":totalcost}
-		product := models.Product{}.Get("name = ? AND store_id = ?", cart[i].Product.Name,cart[i].Product.StoreID)
+		product := models.Product{}.Get("id = ? ", cart[i].Product.ID)
 		product.Update("quantity", (cart[i].Product.Quantity - cart[i].Order))
 		d1 = append(d1,d2)
 	}
